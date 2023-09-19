@@ -1,10 +1,11 @@
 import {
-  ChangeEventHandler, MouseEventHandler, useEffect, useState,
+  ChangeEventHandler,
+  MouseEventHandler,
+  useEffect,
+  useState,
 } from 'react';
 import { Todo, User } from '../../api/api.model';
-import { apiService } from '../../api/api.service';
-
-const users = apiService.fetchUsers();
+import { useUsers } from './useUsers';
 
 type TodoFormProps = {
   handleSubmit: (todo: Todo) => void;
@@ -12,6 +13,8 @@ type TodoFormProps = {
 };
 
 export const TodoForm = ({ handleSubmit, defaultValue }: TodoFormProps) => {
+  const { users, isLoading } = useUsers();
+
   const [selectedUser, setSetselectedUser] = useState<User | null>(
     defaultValue?.user || null,
   );
@@ -37,7 +40,7 @@ export const TodoForm = ({ handleSubmit, defaultValue }: TodoFormProps) => {
   const handleUserChange: ChangeEventHandler<HTMLSelectElement> = (e) => {
     setHasUserError(false);
     setSetselectedUser(
-      users.find((user) => user.id === Number(e.target.value)) || null,
+      users?.find((user) => user.id === Number(e.target.value)) || null,
     );
   };
 
@@ -72,6 +75,10 @@ export const TodoForm = ({ handleSubmit, defaultValue }: TodoFormProps) => {
     setSetselectedUser(null);
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <form action="/api/todos" method="POST">
       <div className="field">
@@ -94,7 +101,7 @@ export const TodoForm = ({ handleSubmit, defaultValue }: TodoFormProps) => {
           <option value="0" disabled>
             Choose a user
           </option>
-          {users.map((user) => (
+          {users?.map((user) => (
             <option key={user.id} value={user.id}>
               {user.username}
             </option>

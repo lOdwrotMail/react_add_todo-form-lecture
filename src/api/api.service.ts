@@ -1,15 +1,19 @@
 import { Todo, User } from './api.model';
-import usersFromServer from './users';
-import todosFromServer from './todos';
 
 class ApiService {
   // eslint-disable-next-line class-methods-use-this
-  fetchUsers(): User[] {
+  async fetchUsers(): Promise<User[]> {
+    const response = await fetch('http://localhost:3000/users');
+    const usersFromServer = (await response.json()) as User[];
+
     return usersFromServer;
   }
 
-  fetchTodos(): Todo[] {
-    const users = this.fetchUsers();
+  async fetchTodos(): Promise<Todo[]> {
+    const users = await this.fetchUsers();
+
+    const response = await fetch('http://localhost:3000/todos');
+    const todosFromServer = (await response.json()) as Todo[];
 
     return todosFromServer.map((v) => ({
       ...v,
