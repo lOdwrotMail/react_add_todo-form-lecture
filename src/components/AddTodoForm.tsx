@@ -1,11 +1,14 @@
-import { useContext } from 'react';
 import { TodoForm } from './TodoForm';
-import { TodoUpdateContext } from './TodoContext';
+import { useAddTodo } from './TodoForm/useAddTodo';
 
 export const AddTodoForm = () => {
-  const { addTodo } = useContext(TodoUpdateContext);
+  const { submitTodo, isLoading } = useAddTodo();
+
+  if (isLoading) {
+    return <div>Submitting...</div>;
+  }
 
   return (
-    <TodoForm onSubmit={addTodo} />
+    <TodoForm onSubmit={submitTodo} />
   );
 };
